@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f7f4ed" />
+  <meta
+    name="description"
+    content="Megatron & Mouth brings the world's great cuisines to one welcoming table."
+  />
+  <title>MEGATRON & MOUTH — A world of flavour</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css?v=20261027-10" />
+  <script src="script.js?v=20261027-10" defer></script>
+</head>
+<body>
+  <div class="page-bg" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="MEGATRON and MOUTH home">
+      <span class="brand-mark">M<span>&</span>M</span>
+      <span class="brand-name"> MEGATRON<i>&</i> MOUTH</span>
+    </a>
+
+    <button
+      class="menu-toggle"
+      aria-label="Open navigation"
+      aria-expanded="false"
+    >
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#story">Our story</a>
+      <a href="#menu">The menu</a>
+      <a href="#experience">Experience</a>
+      <a href="#visit">Find us</a>
+      <a class="nav-reserve" href="#reserve">Book a table <span>↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> A TABLE WITHOUT BORDERS</p>
+        <h1>A world of<br /><em>flavour.</em></h1>
+        <p class="hero-intro">
+          From the spice markets of Marrakech to the little trattorias of
+          Tuscany, every dish has a place at our table.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button button-dark" href="#menu">
+            Explore the menu <span>↗</span>
+          </a>
+          <a class="text-link" href="#story">Our story <span>↓</span></a>
+        </div>
+
+        <div class="hero-note">
+          <span class="note-line"></span>
+          <span>Good food. Faraway places.<br />Right here at home.</span>
+        </div>
+
+        <div class="hero-special" id="todays-special" aria-live="polite">
+          <span class="special-label">Today's special</span>
+          <strong id="special-title">Loading...</strong>
+          <p id="special-note">Fresh from the kitchen.</p>
+        </div>
+      </div>
+
+      <div
+        class="hero-art"
+        role="img"
+        aria-label="A colourful table spread with dishes from around the world"
+      >
+        <div class="hero-image"></div>
+        <div class="hero-stamp">
+          <span>MADE TO</span>
+          <b>SHARE</b>
+          <span>EVERYWHERE</span>
+          <i>✳</i>
+        </div>
+        <div class="image-caption">
+          <span>01 / 04</span>
+          <span>THE WORLD, SERVED FRESH</span>
+        </div>
+      </div>
+
+      <div class="hero-bottom">
+        <span>SCROLL TO DISCOVER</span>
+        <span class="scroll-line"></span>
+        <span>EST. 2018 · WASHINGTON DC</span>
+      </div>
+    </section>
+
+    <section class="intro section-pad" id="story">
+      <div class="section-kicker">01 — THE IDEA</div>
+
+      <div class="intro-content">
+        <p class="eyebrow">ONE TABLE, MANY STORIES</p>
+        <h2>Curiosity is our<br />favourite <em>ingredient.</em></h2>
+        <p class="body-copy">
+          We believe the best meals take you somewhere. Our kitchen borrows
+          lovingly from kitchens around the globe, then makes every plate its
+          own—with seasonal produce, thoughtful sourcing, and a little Washington soul.
+        </p>
+        <a class="under-link" href="#experience">Get to know us <span>↗</span></a>
+      </div>
+
+      <div class="intro-aside">
+        <div class="sun-doodle">✳</div>
+        <p>Good things happen<br />when cultures meet.</p>
+        <span>— CHEF SMITH</span>
+      </div>
+    </section>
+
+    <section class="menu-section section-pad" id="menu">
+      <div class="section-kicker">02 — FROM OUR KITCHEN</div>
+
+      <div class="menu-heading">
+        <div>
+          <p class="eyebrow">A PASSPORT FOR YOUR PALATE</p>
+          <h2>A few of our<br /><em>favourites.</em></h2>
+        </div>
+        <p class="menu-intro">
+          Inspired by the places we love, made with what’s beautiful and in
+          season. Come hungry; leave a little more curious.
+        </p>
+      </div>
+
+      <div class="filters" role="group" aria-label="Filter dishes by cuisine">
+        <button class="filter active" data-filter="all">
+          Everything <span>06</span>
+        </button>
+        <button class="filter" data-filter="mediterranean">Mediterranean</button>
+        <button class="filter" data-filter="asia">Asia</button>
+        <button class="filter" data-filter="west-africa">West Africa</button>
+      </div>
+
+      <div class="dish-grid">
+        <article class="dish-card" data-cuisine="mediterranean">
+          <div class="dish-photo photo-one">
+            <span class="dish-origin">GREECE · ITALY</span>
+            <span class="dish-number">01</span>
+          </div>
+          <div class="dish-info">
+            <div>
+              <h3>Charred tomato panzanella</h3>
+              <p>Burrata · basil · sourdough · aged balsamic</p>
+            </div>
+            <span class="price">$18.00</span>
+          </div>
+        </article>
+
+        <article class="dish-card" data-cuisine="asia">
+          <div class="dish-photo photo-two">
+            <span class="dish-origin">JAPAN</span>
+            <span class="dish-number">02</span>
+          </div>
+          <div class="dish-info">
+            <div>
+              <h3>Miso-glazed fish</h3>
+              <p>Ginger rice · sesame greens · lime</p>
+            </div>
+            <span class="price">$20.00</span>
+          </div>
+        </article>
+
+        <article class="dish-card" data-cuisine="west-africa">
+          <div class="dish-photo photo-three">
+            <span class="dish-origin">GHANA · MOROCCO · NIGERIA</span>
+            <span class="dish-number">03</span>
+          </div>
+          <div class="dish-info">
+            <div>
+              <h3>Suya-spiced lamb shoulder</h3>
+              <p>Smoked aubergine · flatbread · herb yoghurt</p>
+            </div>
+            <span class="price">$34.00</span>
+          </div>
+        </article>
+
+        <article class="dish-card" data-cuisine="asia">
+          <div class="dish-photo photo-four">
+            <span class="dish-origin">THAILAND · VIETNAM</span>
+            <span class="dish-number">04</span>
+          </div>
+          <div class="dish-info">
+            <div>
+              <h3>Coconut lemongrass noodles</h3>
+              <p>Wild mushrooms · pak choi · chilli crunch</p>
+            </div>
+            <span class="price">$20.50</span>
+          </div>
+        </article>
+
+        <article class="dish-card" data-cuisine="mediterranean">
+          <div class="dish-photo photo-five">
+            <span class="dish-origin">LEBANON · TURKEY</span>
+            <span class="dish-number">05</span>
+          </div>
+          <div class="dish-info">
+            <div>
+              <h3>Garden mezze board</h3>
+              <p>Hummus · muhammara · warm pita · pickles</p>
+            </div>
+            <span class="price">$26.00</span>
+          </div>
+        </article>
+
+        <article class="dish-card" data-cuisine="west-africa">
+          <div class="dish-photo photo-six">
+            <span class="dish-origin">NIGERIA · EVERYWHERE</span>
+            <span class="dish-number">06</span>
+          </div>
+          <div class="dish-info">
+            <div>
+              <h3>Smoky Jollof</h3>
+              <p>Smoky tomato rice · parmesan · pepper jam</p>
+            </div>
+            <span class="price">$18.00</span>
+          </div>
+        </article>
+      </div>
+
+      <div class="menu-foot">
+        <span>Our menu moves with the seasons.</span>
+        <a class="under-link" href="#reserve">See you at the table <span>↗</span></a>
+      </div>
+    </section>
+
+    <section class="quote-section" id="experience">
+      <div class="quote-mark">“</div>
+      <p class="eyebrow">THE MEGATRON & MOUTH WAY</p>
+      <blockquote>
+        Come as you are.<br />
+        Leave <em>somewhere new.</em>
+      </blockquote>
+      <div class="quote-bottom">
+        <span>SHARED PLATES, OPEN MINDS, FULL HEARTS</span>
+        <span>✳</span>
+        <span>ALWAYS ROOM FOR ONE MORE</span>
+      </div>
+    </section>
+
+    <section class="visit-section section-pad" id="visit">
+      <div class="section-kicker">03 — COME ON IN</div>
+
+      <div class="visit-grid">
+        <div class="visit-copy">
+          <p class="eyebrow">YOUR TABLE IS WAITING</p>
+          <h2>Make a little<br /><em>room for wonder.</em></h2>
+          <p class="body-copy">
+            A long lunch, a first date, a Tuesday that deserves better. Whatever
+            brings you, we’ll save you a seat.
+          </p>
+          <a class="button button-dark" href="#reserve">Book a table <span>↗</span></a>
+        </div>
+
+        <div class="visit-details">
+          <div class="detail-block">
+            <span class="detail-label">FIND US</span>
+            <p>3819, Pennsylvania<br />Washington DC, USA</p>
+            <a
+              href="https://maps.app.goo.gl/dPP5PZgZi16SvAPQ8"
+              target="_blank"
+              rel="noreferrer"
+            >Get directions ↗</a>
+          </div>
+
+          <div class="detail-block">
+            <span class="detail-label">WHEN TO VISIT</span>
+            <p>Mon – Sun<br />12 noon till late</p>
+            <span class="detail-small">Kitchen closes at 10:30 pm</span>
+          </div>
+
+          <div class="detail-block">
+            <span class="detail-label">SAY HELLO</span>
+            <p>
+              <a href="tel:+1(555)555-5555">+1 (555) 555-5555</a><br />
+              <a href="mailto:hello@megatronandmouth.com">hello@megatronandmouth.com</a>
+            </p>
+          </div>
+        </div>
+
+        <form class="reserve-card" id="reserve">
+          <span class="detail-label">LET’S MAKE IT A DATE</span>
+          <h3>Save your seat.</h3>
+
+          <label>
+            Your name
+            <input
+              name="name"
+              type="text"
+              placeholder="How should we call you?"
+              required
+            />
+          </label>
+
+          <div class="form-row">
+            <label>
+              Date
+              <input name="date" type="date" required />
+            </label>
+            <label>
+              Guests
+              <select name="guests">
+                <option>2 guests</option>
+                <option>1 guest</option>
+                <option>3 guests</option>
+                <option>4 guests</option>
+                <option>5+ guests</option>
+              </select>
+            </label>
+          </div>
+
+          <button class="button button-dark" type="submit">
+            Request a table <span>↗</span>
+          </button>
+          <p class="form-message" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a class="brand" href="#home">
+      <span class="brand-mark">M<span>&</span>M</span>
+      <span class="brand-name">MEGATRON <i>&</i> MOUTH</span>
+    </a>
+    <span class="footer-note">A WORLD OF FLAVOUR. A PLACE TO CALL YOURS.</span>
+    <div class="footer-links">
+      <a href="#menu">Menu</a>
+      <a href="#visit">Contact</a>
+      <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram ↗</a>
+    </div>
+    <span class="copyright">© 2026 MEGATRON & MOUTH</span>
+  </footer>
+</body>
+</html>

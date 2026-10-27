@@ -1,0 +1,12 @@
+{
+  "name": "megatron-mouth",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Restaurant landing page with reservation backend",
+  "scripts": {
+    "start": "node server.js",
+    "start:python": "python server.py",
+    "test": "node --test server.test.js",
+    "test:python": "python -m unittest server_test.py -v"
+  }
+}

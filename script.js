@@ -91,6 +91,25 @@ if (dateInput) {
   dateInput.min = getLocalToday();
 }
 
+async function readJsonResponse(response) {
+  const rawText = await response.text();
+
+  if (!rawText) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(rawText);
+  } catch (error) {
+    const message = rawText.slice(0, 140).replace(/\s+/g, " ").trim();
+    throw new Error(
+      message && message.includes("<!DOCTYPE")
+        ? "The reservation service is unavailable right now. Please refresh and try again."
+        : "The reservation service returned an unexpected response."
+    );
+  }
+}
+
 if (reserveForm) {
   reserveForm.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -122,7 +141,7 @@ if (reserveForm) {
         body: JSON.stringify(formData),
       });
 
-      const payload = await response.json();
+      const payload = await readJsonResponse(response);
 
       if (!response.ok) {
         throw new Error(payload.error || "Reservation could not be sent.");
@@ -132,7 +151,10 @@ if (reserveForm) {
       form.reset();
       if (dateInput) dateInput.min = getLocalToday();
     } catch (error) {
-      setMessage(error.message || "Something went wrong. Please try again.", "error");
+      setMessage(
+        error.message || "Something went wrong. Please try again.",
+        "error"
+      );
     } finally {
       if (submitButton) {
         submitButton.disabled = false;

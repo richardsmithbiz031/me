@@ -1,4 +1,51 @@
-const reservations = globalThis.__mmReservations || (globalThis.__mmReservations = []);
+let storeInstance = null;
+const fallbackReservations = globalThis.__mmReservations || (globalThis.__mmReservations = []);
+
+function getReservationStore() {
+  if (storeInstance) {
+    return storeInstance;
+  }
+
+  try {
+    const { getStore } = require('@netlify/blobs');
+    storeInstance = getStore({ name: 'megatron-mouth-reservations' });
+    return storeInstance;
+  } catch (error) {
+    return null;
+  }
+}
+
+async function readReservations() {
+  const store = getReservationStore();
+
+  if (!store) {
+    return fallbackReservations.slice();
+  }
+
+  try {
+    const reservations = await store.getJSON('reservations');
+    return Array.isArray(reservations) ? reservations : [];
+  } catch (error) {
+    return fallbackReservations.slice();
+  }
+}
+
+async function writeReservations(reservations) {
+  const store = getReservationStore();
+
+  if (!store) {
+    fallbackReservations.length = 0;
+    fallbackReservations.push(...reservations);
+    return;
+  }
+
+  try {
+    await store.setJSON('reservations', reservations);
+  } catch (error) {
+    fallbackReservations.length = 0;
+    fallbackReservations.push(...reservations);
+  }
+}
 
 function getLocalToday() {
   const today = new Date();
@@ -59,7 +106,7 @@ exports.handler = async function handler(event) {
   }
 
   if (event.httpMethod === 'GET') {
-    return jsonResponse(200, { success: true, reservations });
+    return jsonResponse(200, { success: true, reservations: await readReservations() });
   }
 
   if (event.httpMethod !== 'POST') {
@@ -75,7 +122,9 @@ exports.handler = async function handler(event) {
       createdAt: new Date().toISOString(),
     };
 
+    const reservations = await readReservations();
     reservations.push(record);
+    await writeReservations(reservations);
 
     return jsonResponse(200, {
       success: true,

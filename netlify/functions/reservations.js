@@ -1,4 +1,34 @@
-const reservations = globalThis.__mmReservations || (globalThis.__mmReservations = []);
+let storeInstance = null;
+const fallbackReservations = globalThis.__mmReservations || (globalThis.__mmReservations = []);
+
+function getReservationStore() {
+  if (storeInstance) {
+    return storeInstance;
+  }
+
+  try {
+    const { getStore } = require('@netlify/blobs');
+    storeInstance = getStore({ name: 'megatron-mouth-reservations' });
+    return storeInstance;
+  } catch (error) {
+    return null;
+  }
+}
+
+async function readReservations() {
+  const store = getReservationStore();
+
+  if (!store) {
+    return fallbackReservations.slice();
+  }
+
+  try {
+    const reservations = await store.getJSON('reservations');
+    return Array.isArray(reservations) ? reservations : [];
+  } catch (error) {
+    return fallbackReservations.slice();
+  }
+}
 
 function jsonResponse(statusCode, payload) {
   return {
@@ -30,5 +60,5 @@ exports.handler = async function handler(event) {
     return jsonResponse(405, { success: false, error: 'Method not allowed.' });
   }
 
-  return jsonResponse(200, { success: true, reservations });
+  return jsonResponse(200, { success: true, reservations: await readReservations() });
 };

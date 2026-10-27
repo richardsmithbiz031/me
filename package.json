@@ -8,5 +8,8 @@
     "start:python": "python server.py",
     "test": "node --test server.test.js",
     "test:python": "python -m unittest server_test.py -v"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
   }
 }

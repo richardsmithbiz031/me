@@ -81,6 +81,91 @@ function buildConfirmationMessage(name, date, guests) {
   return `Thanks, ${name}. Your table request for ${formattedDate} for ${guests} is ready — our team will be in touch to confirm.`;
 }
 
+function buildNotificationMessage(reservation = {}) {
+  const name = String(reservation.name || 'Unknown guest').trim();
+  const date = String(reservation.date || '').trim();
+  const guests = String(reservation.guests || 'Unknown party size').trim();
+  const phone = String(reservation.phone || 'Not provided').trim();
+  const createdAt = reservation.createdAt
+    ? new Date(reservation.createdAt).toLocaleString('en-GB', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      })
+    : 'Not provided';
+
+  const formattedDate = date
+    ? new Date(`${date}T12:00:00`).toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : 'Unknown date';
+
+  return {
+    subject: `New reservation request for ${name}`,
+    message: [
+      'New reservation request received.',
+      '',
+      `Name: ${name}`,
+      `Date: ${formattedDate}`,
+      `Guests: ${guests}`,
+      `Phone: ${phone}`,
+      `Received: ${createdAt}`,
+      '',
+      'Please reply to confirm the table.',
+    ].join('\n'),
+  };
+}
+
+async function sendReservationNotification(reservation = {}) {
+  const { subject, message } = buildNotificationMessage(reservation);
+  const to = process.env.EMAIL_TO || 'hello@megatronandmouth.com';
+  const from = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'reservations@localhost';
+  const host = process.env.EMAIL_HOST;
+  const user = process.env.EMAIL_USER;
+  const pass = process.env.EMAIL_PASS;
+
+  if (!host || !user || !pass) {
+    console.log('[Reservation notification]');
+    console.log(message);
+    return { success: true, sent: false, mode: 'log', subject, message };
+  }
+
+  try {
+    const nodemailer = require('nodemailer');
+    const transport = nodemailer.createTransport({
+      host,
+      port: Number(process.env.EMAIL_PORT || 587),
+      secure: Number(process.env.EMAIL_PORT || 587) === 465,
+      auth: {
+        user,
+        pass,
+      },
+    });
+
+    await transport.sendMail({
+      from,
+      to,
+      subject,
+      text: message,
+      html: `<p>${message.replace(/\n/g, '<br>')}</p>`,
+    });
+
+    return { success: true, sent: true, mode: 'email', subject, message };
+  } catch (error) {
+    console.error('Reservation notification failed:', error);
+    return {
+      success: false,
+      sent: false,
+      mode: 'email-failed',
+      subject,
+      message,
+      error: error.message,
+    };
+  }
+}
+
 function getTodaySpecial(date = new Date()) {
   const index = date.getDay() % SPECIALS.length;
   return SPECIALS[index];
@@ -174,7 +259,7 @@ const server = http.createServer((req, res) => {
       body += chunk;
     });
 
-    req.on('end', () => {
+    req.on('end', async () => {
       try {
         const payload = JSON.parse(body || '{}');
         const reservation = validateReservation(payload);
@@ -187,13 +272,19 @@ const server = http.createServer((req, res) => {
         reservations.push(reservationRecord);
         writeReservations(reservations);
 
+        const notification = await sendReservationNotification(reservationRecord);
         const message = buildConfirmationMessage(
           reservation.name,
           reservation.date,
           reservation.guests
         );
 
-        sendJson(res, 200, { success: true, message, reservation: reservationRecord });
+        sendJson(res, 200, {
+          success: true,
+          message,
+          reservation: reservationRecord,
+          notification,
+        });
       } catch (error) {
         sendJson(res, 400, { success: false, error: error.message || 'Invalid reservation request.' });
       }
@@ -215,6 +306,8 @@ if (require.main === module) {
 module.exports = {
   validateReservation,
   buildConfirmationMessage,
+  buildNotificationMessage,
+  sendReservationNotification,
   getTodaySpecial,
   server,
 };

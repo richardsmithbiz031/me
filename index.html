@@ -278,43 +278,46 @@
         </div>
       </div>
 
-      <div class="review-grid">
-        <article class="review-card">
-          <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
-          <p>
-            “The room feels special, the food is vibrant, and every plate carries
-            personality. We stayed for dessert and ended up ordering a second round.”
-          </p>
-          <div class="review-person">
-            <strong>Naomi T.</strong>
-            <span>Dinner guest</span>
-          </div>
-        </article>
+      <div class="review-grid" id="review-grid" aria-live="polite"></div>
 
-        <article class="review-card highlight">
-          <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
-          <p>
-            “Absolutely worth the wait. The flavour combinations are inventive,
-            the service is warm, and the atmosphere is elegant without feeling stiff.”
-          </p>
-          <div class="review-person">
-            <strong>Marcus L.</strong>
-            <span>Weekend date night</span>
-          </div>
-        </article>
+      <form class="review-form" id="review-form" novalidate>
+        <div class="review-field">
+          <label for="review-name">Your name</label>
+          <input id="review-name" name="reviewName" type="text" placeholder="Your name" required />
+        </div>
 
-        <article class="review-card">
-          <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
-          <p>
-            “A beautifully layered menu with something for everyone. We came for
-            cocktails and left talking about the jollof for days.”
-          </p>
-          <div class="review-person">
-            <strong>Rina S.</strong>
-            <span>Local regular</span>
+        <div class="review-field">
+          <label>Your rating</label>
+          <div class="star-picker" role="radiogroup" aria-label="Choose a rating">
+            <input type="radio" name="reviewRating" id="review-rating-5" value="5" checked />
+            <label for="review-rating-5" class="star-option active" aria-label="5 stars">★</label>
+            <input type="radio" name="reviewRating" id="review-rating-4" value="4" />
+            <label for="review-rating-4" class="star-option" aria-label="4 stars">★</label>
+            <input type="radio" name="reviewRating" id="review-rating-3" value="3" />
+            <label for="review-rating-3" class="star-option" aria-label="3 stars">★</label>
+            <input type="radio" name="reviewRating" id="review-rating-2" value="2" />
+            <label for="review-rating-2" class="star-option" aria-label="2 stars">★</label>
+            <input type="radio" name="reviewRating" id="review-rating-1" value="1" />
+            <label for="review-rating-1" class="star-option" aria-label="1 star">★</label>
           </div>
-        </article>
-      </div>
+        </div>
+
+        <div class="review-field review-field-full">
+          <label for="review-message">Your review</label>
+          <textarea
+            id="review-message"
+            name="reviewMessage"
+            rows="5"
+            placeholder="Tell us about your evening..."
+            required
+          ></textarea>
+        </div>
+
+        <button class="button button-dark" type="submit">
+          Submit review <span>↗</span>
+        </button>
+        <p class="review-form-message" aria-live="polite"></p>
+      </form>
     </section>
 
     <section class="visit-section section-pad" id="visit">

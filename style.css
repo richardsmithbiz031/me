@@ -927,6 +927,103 @@ a {
   font-size: 10px;
 }
 
+.review-form {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+  padding: 26px 22px;
+  background: rgba(234, 228, 216, 0.96);
+  border: 1px solid rgba(112, 95, 66, 0.2);
+  box-shadow: 0 20px 40px rgba(10, 8, 6, 0.14);
+}
+
+.review-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.review-field-full {
+  grid-column: 1 / -1;
+}
+
+.review-form label {
+  font-size: 9px;
+  letter-spacing: 0.14rem;
+  text-transform: uppercase;
+  color: #56574f;
+  font-weight: 700;
+}
+
+.review-form input,
+.review-form textarea {
+  width: 100%;
+  border: 1px solid rgba(53, 47, 39, 0.2);
+  background: rgba(255, 255, 255, 0.32);
+  padding: 12px 14px;
+  color: var(--ink);
+  font: 12px var(--sans);
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.review-form textarea {
+  min-height: 120px;
+}
+
+.review-form input:focus,
+.review-form textarea:focus {
+  outline: 2px solid rgba(195, 129, 56, 0.3);
+  border-color: rgba(195, 129, 56, 0.5);
+}
+
+.star-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+}
+
+.star-picker input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.star-option {
+  font-size: 28px;
+  line-height: 1;
+  color: rgba(42, 37, 31, 0.28);
+  cursor: pointer;
+  transition: transform 0.18s ease, color 0.18s ease;
+  user-select: none;
+}
+
+.star-option:hover,
+.star-option.active {
+  color: #d89a3c;
+  transform: translateY(-1px);
+}
+
+.review-form button {
+  align-self: end;
+}
+
+.review-form-message {
+  grid-column: 1 / -1;
+  min-height: 18px;
+  margin: 0;
+  font-size: 10px;
+  color: #1d5e3d;
+}
+
+.review-form-message[data-tone="error"] {
+  color: #a6422d;
+}
+
 .visit-section {
   padding-top: 103px;
   padding-bottom: 105px;

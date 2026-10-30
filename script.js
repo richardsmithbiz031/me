@@ -117,12 +117,18 @@ if (reserveForm) {
     const form = event.currentTarget;
     const formData = {
       name: form.elements.name.value.trim(),
+      email: form.elements.email.value.trim(),
+      phone: form.elements.phone.value.trim(),
       date: form.elements.date.value,
+      time: form.elements.time.value,
       guests: form.elements.guests.value,
     };
 
-    if (!formData.name || !formData.date) {
-      setMessage("Please complete your name and the reservation date.", "error");
+    if (!formData.name || !formData.date || !formData.email || !formData.phone || !formData.time) {
+      setMessage(
+        "Please complete your name, email, phone number, time, and reservation date.",
+        "error"
+      );
       return;
     }
 

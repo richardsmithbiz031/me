@@ -51,6 +51,7 @@ const defaultReviews = [
   },
 ];
 const REVIEW_STORAGE_KEY = "megatron-mouth-reviews";
+const PROFILE_STORAGE_KEY = "megatron-mouth-profile";
 
 function getTodaySpecial(date = new Date()) {
   const index = date.getDay() % specials.length;
@@ -152,6 +153,37 @@ function setReviewMessage(text, tone = "neutral") {
   reviewFormMessage.dataset.tone = tone;
 }
 
+function readStoredProfile() {
+  try {
+    const profile = JSON.parse(localStorage.getItem(PROFILE_STORAGE_KEY) || "null");
+    return profile && typeof profile === "object" ? profile : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveProfile(profile) {
+  try {
+    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function populateReservationFormFromProfile() {
+  const profile = readStoredProfile();
+  if (!profile || !reserveForm) return;
+
+  const nameField = reserveForm.elements.name;
+  const emailField = reserveForm.elements.email;
+  const phoneField = reserveForm.elements.phone;
+
+  if (nameField && !nameField.value) nameField.value = profile.name || "";
+  if (emailField && !emailField.value) emailField.value = profile.email || "";
+  if (phoneField && !phoneField.value) phoneField.value = profile.phone || "";
+}
+
 function syncRatingStars(selectedValue = 5) {
   if (!reviewForm) return;
 
@@ -230,6 +262,49 @@ function getLocalToday() {
   return today.toISOString().slice(0, 10);
 }
 
+const profileForm = document.querySelector("#profile-form");
+const profileMessage = document.querySelector(".profile-message");
+
+function setProfileMessage(text, tone = "neutral") {
+  if (!profileMessage) return;
+  profileMessage.textContent = text;
+  profileMessage.dataset.tone = tone;
+}
+
+if (profileForm) {
+  const savedProfile = readStoredProfile();
+  if (savedProfile) {
+    profileForm.elements.profileName.value = savedProfile.name || "";
+    profileForm.elements.profileEmail.value = savedProfile.email || "";
+    profileForm.elements.profilePhone.value = savedProfile.phone || "";
+    populateReservationFormFromProfile();
+  }
+
+  profileForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const profile = {
+      name: profileForm.elements.profileName.value.trim(),
+      email: profileForm.elements.profileEmail.value.trim(),
+      phone: profileForm.elements.profilePhone.value.trim(),
+    };
+
+    if (!profile.name || !profile.email || !profile.phone) {
+      setProfileMessage("Please fill in your name, email, and phone to create a profile.", "error");
+      return;
+    }
+
+    const success = saveProfile(profile);
+    if (!success) {
+      setProfileMessage("Your browser blocked profile storage. Please try again.", "error");
+      return;
+    }
+
+    setProfileMessage("Profile created! Your details are ready for reservations.", "success");
+    populateReservationFormFromProfile();
+  });
+}
+
 if (dateInput) {
   dateInput.min = getLocalToday();
 }
@@ -254,6 +329,8 @@ async function readJsonResponse(response) {
 }
 
 if (reserveForm) {
+  populateReservationFormFromProfile();
+
   reserveForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 

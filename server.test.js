@@ -140,3 +140,45 @@ test('reservation API returns the customer confirmation result in the response',
     });
   }
 });
+
+test('admin reservations endpoint returns stored bookings', async () => {
+  await new Promise((resolve) => server.listen(0, resolve));
+  const { port } = server.address();
+
+  try {
+    const response = await new Promise((resolve, reject) => {
+      const req = http.request(
+        {
+          host: '127.0.0.1',
+          port,
+          path: '/api/admin/reservations',
+          method: 'GET',
+        },
+        (res) => {
+          let body = '';
+          res.on('data', (chunk) => {
+            body += chunk;
+          });
+          res.on('end', () => {
+            try {
+              resolve({ statusCode: res.statusCode, payload: JSON.parse(body) });
+            } catch (error) {
+              reject(error);
+            }
+          });
+        }
+      );
+
+      req.on('error', reject);
+      req.end();
+    });
+
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.payload.success, true);
+    assert.ok(Array.isArray(response.payload.reservations));
+  } finally {
+    await new Promise((resolve, reject) => {
+      server.close((error) => (error ? reject(error) : resolve()));
+    });
+  }
+});

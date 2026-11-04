@@ -291,7 +291,16 @@ exports.handler = async function handler(event) {
     };
   }
 
+  const requestPath = (event.path || '').toLowerCase();
+
   if (event.httpMethod === 'GET') {
+    if (requestPath.includes('/admin/reservations')) {
+      return jsonResponse(200, {
+        success: true,
+        reservations: await readReservations(),
+      });
+    }
+
     return jsonResponse(200, { success: true, reservations: await readReservations() });
   }
 

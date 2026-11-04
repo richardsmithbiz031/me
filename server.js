@@ -1,10 +1,12 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const sqlite3 = require('sqlite3').verbose();
 
 const PORT = Number(process.env.PORT) || 3000;
 const ROOT = __dirname;
 const RESERVATIONS_FILE = path.join(ROOT, 'reservations.json');
+const DATABASE_FILE = path.join(ROOT, 'megatron-mouth.db');
 const SPECIALS = [
   {
     title: 'Saffron Chicken Tagine',
@@ -277,18 +279,96 @@ function getTodaySpecial(date = new Date()) {
   return SPECIALS[index];
 }
 
-function readReservations() {
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const db = new sqlite3.Database(DATABASE_FILE, (error) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+
+      db.run(`
+        CREATE TABLE IF NOT EXISTS reservations (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          phone TEXT,
+          date TEXT NOT NULL,
+          time TEXT NOT NULL,
+          guests TEXT NOT NULL,
+          createdAt TEXT NOT NULL
+        )
+      `, (createError) => {
+        if (createError) {
+          reject(createError);
+          return;
+        }
+
+        resolve(db);
+      });
+    });
+  });
+}
+
+async function readReservations() {
+  const db = await openDatabase();
+
   try {
-    const raw = fs.readFileSync(RESERVATIONS_FILE, 'utf8');
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    return [];
+    return await new Promise((resolve, reject) => {
+      db.all(
+        'SELECT * FROM reservations ORDER BY createdAt DESC',
+        [],
+        (error, rows) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          resolve(Array.isArray(rows) ? rows : []);
+        }
+      );
+    });
+  } finally {
+    db.close();
   }
 }
 
-function writeReservations(reservations) {
-  fs.writeFileSync(RESERVATIONS_FILE, JSON.stringify(reservations, null, 2));
+async function writeReservations(reservations) {
+  const db = await openDatabase();
+
+  try {
+    await new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.run('DELETE FROM reservations');
+        const insert = db.prepare(
+          'INSERT INTO reservations (name, email, phone, date, time, guests, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?)'
+        );
+
+        reservations.forEach((reservation) => {
+          insert.run(
+            reservation.name,
+            reservation.email,
+            reservation.phone,
+            reservation.date,
+            reservation.time,
+            reservation.guests,
+            reservation.createdAt || new Date().toISOString()
+          );
+        });
+
+        insert.finalize((finalizeError) => {
+          if (finalizeError) {
+            reject(finalizeError);
+            return;
+          }
+
+          resolve();
+        });
+      });
+    });
+  } finally {
+    db.close();
+  }
 }
 
 function sendJson(res, statusCode, payload) {
@@ -340,7 +420,7 @@ function serveStaticFile(res, requestPath) {
   });
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
 
   if (req.method === 'OPTIONS') {
@@ -354,7 +434,20 @@ const server = http.createServer((req, res) => {
   }
 
   if (url.pathname === '/api/reservations' && req.method === 'GET') {
-    sendJson(res, 200, { success: true, reservations: readReservations() });
+    const reservations = await readReservations();
+    sendJson(res, 200, {
+      success: true,
+      reservations: reservations.slice().sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)),
+    });
+    return;
+  }
+
+  if (url.pathname === '/api/admin/reservations' && req.method === 'GET') {
+    const reservations = await readReservations();
+    sendJson(res, 200, {
+      success: true,
+      reservations: reservations.slice().sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)),
+    });
     return;
   }
 
@@ -374,9 +467,10 @@ const server = http.createServer((req, res) => {
           ...reservation,
           createdAt: new Date().toISOString(),
         };
-        const reservations = readReservations();
+
+        const reservations = await readReservations();
         reservations.push(reservationRecord);
-        writeReservations(reservations);
+        await writeReservations(reservations);
 
         const notification = await sendReservationNotification(reservationRecord);
         const customerReply = await sendCustomerConfirmationEmail(reservationRecord);
@@ -398,6 +492,11 @@ const server = http.createServer((req, res) => {
       }
     });
 
+    return;
+  }
+
+  if (url.pathname === '/admin') {
+    serveStaticFile(res, '/admin.html');
     return;
   }
 
